@@ -13,9 +13,9 @@ Go on this link [analyticsvidhya](https://www.analyticsvidhya.com/blog/2019/10/h
 - pip3 install networkx 		
 - download 'en_core_web_sm': python3 -m spacy download en_core_web_sm 
 
--download csv file: https://drive.google.com/file/d/1yuEUhkVFIYfMVfpA_crFGfSeJLgbPUxu/view
+- download csv file: https://drive.google.com/file/d/1yuEUhkVFIYfMVfpA_crFGfSeJLgbPUxu/view
 
-note: this script run on ipython so if you have not installed ipython yet, please install it: pip3 install ipython 
+- note: this script run on ipython so if you have not installed ipython yet, please install it: pip3 install ipython 
 
 ## **Run**
 
