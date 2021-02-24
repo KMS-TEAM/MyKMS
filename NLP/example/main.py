@@ -1,6 +1,7 @@
 from spacy.lang.en import English
 import spacy
 import en_core_web_sm
+from example import example
 
 def spacy_tokenizing(nlp, text):
     my_doc = nlp(text)
@@ -47,6 +48,8 @@ def spacy_tagging(text):
         print(word.text, word.pos_)
 
 if __name__ == "__main__":
+
+    example.printSomething(example, "Hello !!!")
 
     f = open("text.txt", "r")
     text = f.read()
