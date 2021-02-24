@@ -2,9 +2,6 @@ from spacy.lang.en import English
 import spacy
 import en_core_web_sm
 
-text = """When learning data science, you shouldn't get discouraged!
-Challenges and setbacks aren't failures, they're just part of the journey. You've got this!"""
-
 def spacy_tokenizing(nlp, text):
     my_doc = nlp(text)
     token_list = []
@@ -50,10 +47,17 @@ def spacy_tagging(text):
         print(word.text, word.pos_)
 
 if __name__ == "__main__":
+
+    f = open("text.txt", "r")
+    text = f.read()
+
     nlp = English()
+
     spacy_tokenizing(nlp, text)
     spacy_sentencizer(nlp, text)
+
     eng_stop_words(20)
+
     print(remove_stopwords(nlp, text))
     # print(stremming(nlp, text))
     spacy_tagging(text)
