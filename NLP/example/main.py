@@ -1,5 +1,6 @@
 from spacy.lang.en import English
 import spacy
+import en_core_web_sm
 
 text = """When learning data science, you shouldn't get discouraged!
 Challenges and setbacks aren't failures, they're just part of the journey. You've got this!"""
@@ -33,9 +34,27 @@ def remove_stopwords(nlp, text):
             filtered_sent.append(word)
     return filtered_sent
 
+# Something woring here ....
+def stremming(nlp, text):
+    word_stremed = []
+    lem = nlp(text)
+    for word in lem:
+        word_stremed.append(word.lemma_)
+        print(word.text, word.lemma_)
+    return word_stremed
+
+def spacy_tagging(text):
+    nlp = en_core_web_sm.load()
+    docs = nlp(text)
+    for word in docs:
+        print(word.text, word.pos_)
+
 if __name__ == "__main__":
     nlp = English()
     spacy_tokenizing(nlp, text)
     spacy_sentencizer(nlp, text)
     eng_stop_words(20)
     print(remove_stopwords(nlp, text))
+    # print(stremming(nlp, text))
+    spacy_tagging(text)
+
