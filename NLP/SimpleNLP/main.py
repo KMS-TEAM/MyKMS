@@ -1,13 +1,21 @@
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
+#<<<<<<< Updated upstream
 from spacy.matcher import Matcher
 from spacy.tokens import Span
 from common import Words, Chunk
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-
+#=======
+from words import Words
+from words import Chunk
+from words import Ents
+from spacy.matcher import Matcher
+from spacy.tokens import Span
+from spacy import displacy
 class SimpleNLP():
+
     # Init Simple NLP Object
     def __init__(self, url):
         self.file_url = url
@@ -57,6 +65,16 @@ class SimpleNLP():
             temp.root_head_text=chunk.root.head.text
             self.noun_chunk.append(temp)
         return self.noun_chunk
+    def Name_Entity_Recognition(self):
+        self.ner = []
+        for ent in self.doc.ents:
+            tem = Ents()
+            tem.text = ent.text
+            tem.start_char = ent.start_char
+            tem.end_char = ent.end_char
+            tem.label = ent.label_
+            self.ner.append(tem)
+        return self.ner
 
     def get_entities(self, sent):
         ## chunk 1
@@ -147,9 +165,11 @@ class SimpleNLP():
         kg_df.to_csv(path_or_buf = r"/home/lacie/Github/MyKMS/NLP/SimpleNLP/data/output/kg.csv")
 
 
+
 if __name__ == "__main__":
     test = SimpleNLP(u"data/input/test.txt")
     data = test.read_txt()
+#<<<<<<< Updated upstream
     entity_pairs = test.get_entitiy_pairs()
     for entity_pair in entity_pairs:
         print(entity_pair)
@@ -159,8 +179,4 @@ if __name__ == "__main__":
         print(relation)
 
     test.get_KG()
-
-
-
-
 
