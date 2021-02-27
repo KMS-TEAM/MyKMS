@@ -1,11 +1,13 @@
-import csv
-import os
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
-from words import Words
-from words import Chunk
-class SimpleNLP():
+from spacy.matcher import Matcher
+from spacy.tokens import Span
+from common import Words, Chunk
+import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
 
+class SimpleNLP():
     # Init Simple NLP Object
     def __init__(self, url):
         self.file_url = url
@@ -14,7 +16,6 @@ class SimpleNLP():
         self.nlp = spacy.load("en_core_web_sm")
 
     def read_txt(self):
-
         fd =  open(self.file_url,mode ='r', encoding='utf-8')
         self.data = fd.read().strip()
         self.doc = self.nlp(self.data)
@@ -25,7 +26,7 @@ class SimpleNLP():
         self.sents = []
         for sent in self.doc.sents:
             self.sents.append(sent)
-            print(sent)
+        #    print(sent)
         return self.sents
 
     def word(self, stop_word = False):
@@ -46,9 +47,6 @@ class SimpleNLP():
                     self.words.append(temp)
             return self.words
 
-      #  self.determined_word()
-      #  self.main_nouns()
-       # return self.word
     def noun_chunk(self):
         self.noun_chunk = []
         for chunk in self.doc.noun_chunks:
@@ -60,17 +58,108 @@ class SimpleNLP():
             self.noun_chunk.append(temp)
         return self.noun_chunk
 
-  #  def determined_word(self):
-      #  self.determined_words = []
+    def get_entities(self, sent):
+        ## chunk 1
+        ent1 = ""
+        ent2 = ""
+        prv_tok_dep = ""  # dependency tag of previous token in the sentence
+        prv_tok_text = ""  # previous token in the sentence
+        prefix = ""
+        modifier = ""
 
-  #  def main_nouns(self):
-       # self.list_main_noun = []
+        for tok in self.nlp(str(sent)):
+            ## chunk 2
+            # if token is a punctuation mark then move on to the next token
+            if tok.dep_ != "punct":
+                # check: token is a compound word or not
+                if tok.dep_ == "compound":
+                    prefix = tok.text
+                    # if the previous word was also a 'compound' then add the current word to it
+                    if prv_tok_dep == "compound":
+                        prefix = prv_tok_text + " " + tok.text
+
+                # check: token is a modifier or not
+                if tok.dep_.endswith("mod") == True:
+                    modifier = tok.text
+                    # if the previous word was also a 'compound' then add the current word to it
+                    if prv_tok_dep == "compound":
+                        modifier = prv_tok_text + " " + tok.text
+
+                ## chunk 3
+                if tok.dep_.find("subj") == True:
+                    ent1 = modifier + " " + prefix + " " + tok.text
+                    prefix = ""
+                    modifier = ""
+                    prv_tok_dep = ""
+                    prv_tok_text = ""
+
+                    ## chunk 4
+                if tok.dep_.find("obj") == True:
+                    ent2 = modifier + " " + prefix + " " + tok.text
+
+                ## chunk 5
+                # update variables
+                prv_tok_dep = tok.dep_
+                prv_tok_text = tok.text
+
+        return [ent1.strip(), ent2.strip()]
+
+    def get_entitiy_pairs(self):
+        self.entity_pairs = []
+        self.sentencer()
+        for sent in self.sents:
+        #    print(type(sent))
+            self.entity_pairs.append(self.get_entities((sent)))
+        return self.entity_pairs
+
+    def get_relation(self):
+        self.relations = []
+        self.sentencer()
+        for sent in self.sents:
+            doc = self.nlp(str(sent))
+            # Matcher class object
+            matcher = Matcher(self.nlp.vocab)
+            # define the pattern
+            pattern = [{'DEP': 'ROOT'},
+                       {'DEP': 'prep', 'OP': "?"},
+                       {'DEP': 'agent', 'OP': "?"},
+                       {'POS': 'ADJ', 'OP': "?"}]
+            matcher.add("matching_1", [pattern])
+            matches = matcher(doc)
+            k = len(matches) - 1
+            span = doc[matches[k][1]:matches[k][2]]
+            self.relations.append(span.text)
+        return self.relations
+
+    def get_KG(self):
+        # extract subject
+        source = [i[0] for i in self.entity_pairs]
+        # extract object
+        target = [i[1] for i in self.entity_pairs]
+        kg_df = pd.DataFrame({'source': source, 'target': target, 'edge': relations})
+        # create a directed-graph from a dataframe
+        G = nx.from_pandas_edgelist(kg_df, "source", "target",
+                                    edge_attr=True, create_using=nx.MultiDiGraph())
+        plt.figure(figsize=(12, 12))
+        pos = nx.spring_layout(G)
+        nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
+        plt.show()
 
 
 if __name__ == "__main__":
-    test = SimpleNLP(u"/home/nguyen/Github/MyKMS/NLP/test-chunk.txt")
+    test = SimpleNLP(u"data/test.txt")
     data = test.read_txt()
-    words = test.word()
-    noun_chunks= test.noun_chunk()
-    for chunk in noun_chunks:
-        print(chunk.text+" "+chunk.root_text+" "+chunk.root_dep)
+    entity_pairs = test.get_entitiy_pairs()
+    for entity_pair in entity_pairs:
+        print(entity_pair)
+
+    relations = test.get_relation()
+    for relation in relations:
+        print(relation)
+
+    test.get_KG()
+
+
+
+
+
