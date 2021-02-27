@@ -2,11 +2,8 @@ import csv
 import os
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
-<<<<<<< HEAD
 from words import Words
 
-=======
->>>>>>> main
 class SimpleNLP():
 
     # Init Simple NLP Object
@@ -20,7 +17,6 @@ class SimpleNLP():
         self.file_url = '/home/nguyen/Documents/muc-tieu-ngan-han/neo4j/test.txt'
         fd =  open(self.file_url,mode ='r', encoding='utf-8')
         self.data = fd.read().strip()
-<<<<<<< HEAD
         self.doc = self.nlp(self.data)
         return self.data
 
@@ -49,42 +45,11 @@ class SimpleNLP():
                     temp.tagging = word.pos_
                     self.words.append(temp)
             return self.words
-=======
-        return self.data
 
-    def sentencer(self):
-        doc = self.nlp(self.data)
-        print(type(doc))
-        self.sent = []
-        for sent in doc.sents:
-            self.sent.append(sent)
-            print(sent)
-        return self.sent
-        print("Use self.data and some function ins SpaCy to segment sentence")
-
-    def word(self):
-        doc = self.nlp(self.data)
-        self.words = []
-        for word in doc:
-            self.words.append(word.text)
-        return self.words
->>>>>>> main
-
-      #  self.remove_trash_word()
       #  self.determined_word()
       #  self.main_nouns()
        # return self.word
 
-<<<<<<< HEAD
-=======
-    def remove_trash_word(self):
-        self.removed_trash_word = []
-        doc = self.nlp(self.data)
-        for word in doc:
-            if word.is_stop == False:
-                self.removed_trash_word.append(word)
-        return self.removed_trash_word
->>>>>>> main
     def determined_word(self):
         self.determined_words = []
 
@@ -95,7 +60,6 @@ class SimpleNLP():
 if __name__ == "__main__":
     test = SimpleNLP(u"/home/nguyen/Documents/muc-tieu-ngan-han/neo4j/test.txt")
     data = test.read_txt()
-<<<<<<< HEAD
     words = test.word()
     print(len(words))
     for word in words:
@@ -106,11 +70,5 @@ if __name__ == "__main__":
     print(len(remove_words))
     for word in remove_words:
         print(word.text + " " + word.tagging)
-=======
-    text = test.sentencer()
-    words = test.word()
-    stop_word = test.remove_trash_word()
-    for word in stop_word:
-        print(word)
->>>>>>> main
+
 
