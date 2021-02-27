@@ -3,7 +3,7 @@ import os
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 from words import Words
-
+from words import Chunk
 class SimpleNLP():
 
     # Init Simple NLP Object
@@ -14,7 +14,7 @@ class SimpleNLP():
         self.nlp = spacy.load("en_core_web_sm")
 
     def read_txt(self):
-        self.file_url = '/home/nguyen/Documents/muc-tieu-ngan-han/neo4j/test.txt'
+
         fd =  open(self.file_url,mode ='r', encoding='utf-8')
         self.data = fd.read().strip()
         self.doc = self.nlp(self.data)
@@ -49,26 +49,28 @@ class SimpleNLP():
       #  self.determined_word()
       #  self.main_nouns()
        # return self.word
+    def noun_chunk(self):
+        self.noun_chunk = []
+        for chunk in self.doc.noun_chunks:
+            temp = Chunk()
+            temp.text=chunk.text
+            temp.root_text=chunk.root.text
+            temp.root_dep=chunk.root.dep_
+            temp.root_head_text=chunk.root.head.text
+            self.noun_chunk.append(temp)
+        return self.noun_chunk
 
-    def determined_word(self):
-        self.determined_words = []
+  #  def determined_word(self):
+      #  self.determined_words = []
 
-    def main_nouns(self):
-        self.list_main_noun = []
+  #  def main_nouns(self):
+       # self.list_main_noun = []
 
 
 if __name__ == "__main__":
-    test = SimpleNLP(u"/home/nguyen/Documents/muc-tieu-ngan-han/neo4j/test.txt")
+    test = SimpleNLP(u"/home/nguyen/Github/MyKMS/NLP/test-chunk.txt")
     data = test.read_txt()
     words = test.word()
-    print(len(words))
-    for word in words:
-        print(word.text + " " + word.tagging)
-
-    print("Something chnaged")
-    remove_words = test.word(True)
-    print(len(remove_words))
-    for word in remove_words:
-        print(word.text + " " + word.tagging)
-
-
+    noun_chunks= test.noun_chunk()
+    for chunk in noun_chunks:
+        print(chunk.text+" "+chunk.root_text+" "+chunk.root_dep)
