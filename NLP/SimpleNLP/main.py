@@ -132,7 +132,7 @@ class SimpleNLP():
         return self.relations
 
     def get_KG(self):
-        # extract subject
+        # extract subjec
         source = [i[0] for i in self.entity_pairs]
         # extract object
         target = [i[1] for i in self.entity_pairs]
@@ -144,10 +144,11 @@ class SimpleNLP():
         pos = nx.spring_layout(G)
         nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
         plt.show()
+        kg_df.to_csv(path_or_buf = r"/home/lacie/Github/MyKMS/NLP/SimpleNLP/data/output/kg.csv")
 
 
 if __name__ == "__main__":
-    test = SimpleNLP(u"data/test.txt")
+    test = SimpleNLP(u"data/input/test.txt")
     data = test.read_txt()
     entity_pairs = test.get_entitiy_pairs()
     for entity_pair in entity_pairs:
