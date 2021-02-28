@@ -1,14 +1,10 @@
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 from spacy.matcher import Matcher
-from spacy.tokens import Span
 from common import Words, Chunk
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from words import Words, Chunk, Ents
-from spacy.matcher import Matcher
-from spacy.tokens import Span
 import csv
 
 class SimpleNLP():
@@ -67,17 +63,6 @@ class SimpleNLP():
             temp.root_head_text=chunk.root.head.text
             self.noun_chunk.append(temp)
         return self.noun_chunk
-
-    def Name_Entity_Recognition(self):
-        self.ner = []
-        for ent in self.doc.ents:
-            tem = Ents()
-            tem.text = ent.text
-            tem.start_char = ent.start_char
-            tem.end_char = ent.end_char
-            tem.label = ent.label_
-            self.ner.append(tem)
-        return self.ner
 
     def get_entities(self, sent):
         ## chunk 1
@@ -165,4 +150,4 @@ class SimpleNLP():
         pos = nx.spring_layout(G)
         nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
         plt.show()
-        kg_df.to_csv(path_or_buf = r"/home/nguyen/Github/MyKMS/NLP/SimpleNLP/data/output/kg.csv")
+        kg_df.to_csv(path_or_buf = r"data/output/kg.csv")
