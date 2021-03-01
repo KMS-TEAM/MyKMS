@@ -10,13 +10,13 @@ import csv
 class SimpleNLP():
 
     # Init Simple NLP Object
-    def __init__(self, url):
-        self.file_url = url
+    def __init__(self):
+        self.file_url = ''
         self.data = ''
         self.graph = []
         self.nlp = spacy.load("en_core_web_sm")
 
-    def read_csv(self):
+    def read_csv(self, url):
         self.sents = []
         with open(self.file_url,'rt') as f:
             doc = csv.reader(f)
@@ -25,7 +25,7 @@ class SimpleNLP():
         return self.sents
 
 
-    def read_txt(self):
+    def read_txt(self, url):
         fd =  open(self.file_url,mode ='r', encoding='utf-8')
         self.data = fd.read().strip()
         self.doc = self.nlp(self.data)
