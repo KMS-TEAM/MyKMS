@@ -6,7 +6,6 @@ from common import Words, Chunk
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from words import Words, Chunk, Ents
 from spacy.matcher import Matcher
 from spacy.tokens import Span
 import csv
@@ -23,8 +22,8 @@ class SimpleNLP():
     def read_csv(self):
         self.sents = []
         with open(self.file_url,'rt') as f:
-            doc = csv.reader(f)
-            for line in doc:
+            data = csv.reader(f)
+            for line in data:
                 self.sents.append(line)
         return self.sents
 
