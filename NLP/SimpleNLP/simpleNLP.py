@@ -5,7 +5,10 @@ from common import Words, Chunk
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+from spacy.tokens import Span
 import csv
+
+
 
 class SimpleNLP():
 
@@ -19,8 +22,8 @@ class SimpleNLP():
     def read_csv(self, url):
         self.sents = []
         with open(self.file_url,'rt') as f:
-            doc = csv.reader(f)
-            for line in doc:
+            data = csv.reader(f)
+            for line in data:
                 self.sents.append(line)
         return self.sents
 
@@ -151,3 +154,15 @@ class SimpleNLP():
         nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
         plt.show()
         kg_df.to_csv(path_or_buf = r"data/output/kg.csv")
+        
+    def source(self):
+        entity_pairs = self.get_entitiy_pairs()
+        self.source = [i[0] for i in entity_pairs]
+        # extract object
+        return self.source
+      
+    def target(self):
+        entity_pairs = self.get_entitiy_pairs()
+        self.target = [i[1] for i in entity_pairs]
+        return self.target
+
