@@ -167,12 +167,18 @@ class SimpleNLP():
         nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
         plt.show()
         kg_df.to_csv(path_or_buf = r"/home/nguyen/Github/MyKMS/NLP/SimpleNLP/data/output/kg.csv")
-    def source(self):
+
+    def numbers(self):
+        entity_pairs = self.get_entitiy_pairs()
+        self.number = len(entity_pairs)
+        return self.number
+
+    def NLPrun(self):
+        self.read_txt()
+        self.get_entitiy_pairs()
+        self.get_relation()
         entity_pairs = self.get_entitiy_pairs()
         self.source = [i[0] for i in entity_pairs]
         # extract object
-        return self.source
-    def target(self):
         entity_pairs = self.get_entitiy_pairs()
         self.target = [i[1] for i in entity_pairs]
-        return self.target
