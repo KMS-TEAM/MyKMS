@@ -26,3 +26,5 @@ if __name__ == "__main__":
             session.write_transaction(add_friend, title)
         for titles in test.target():
             session.write_transaction(add_friend, titles)
+
+    print("tested")
