@@ -1,10 +1,12 @@
 import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 from spacy.matcher import Matcher
+from spacy.tokens import Span
 from common import Words, Chunk
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+from spacy.matcher import Matcher
 from spacy.tokens import Span
 import csv
 
@@ -13,13 +15,13 @@ import csv
 class SimpleNLP():
 
     # Init Simple NLP Object
-    def __init__(self):
-        self.file_url = ''
+    def __init__(self, url):
+        self.file_url = url
         self.data = ''
         self.graph = []
         self.nlp = spacy.load("en_core_web_sm")
 
-    def read_csv(self, url):
+    def read_csv(self):
         self.sents = []
         with open(self.file_url,'rt') as f:
             data = csv.reader(f)
@@ -28,7 +30,7 @@ class SimpleNLP():
         return self.sents
 
 
-    def read_txt(self, url):
+    def read_txt(self):
         fd =  open(self.file_url,mode ='r', encoding='utf-8')
         self.data = fd.read().strip()
         self.doc = self.nlp(self.data)
@@ -66,6 +68,17 @@ class SimpleNLP():
             temp.root_head_text=chunk.root.head.text
             self.noun_chunk.append(temp)
         return self.noun_chunk
+
+    def Name_Entity_Recognition(self):
+        self.ner = []
+        for ent in self.doc.ents:
+            tem = Ents()
+            tem.text = ent.text
+            tem.start_char = ent.start_char
+            tem.end_char = ent.end_char
+            tem.label = ent.label_
+            self.ner.append(tem)
+        return self.ner
 
     def get_entities(self, sent):
         ## chunk 1
@@ -153,16 +166,21 @@ class SimpleNLP():
         pos = nx.spring_layout(G)
         nx.draw(G, with_labels=True, node_color='skyblue', edge_cmap=plt.cm.Blues, pos=pos)
         plt.show()
-        kg_df.to_csv(path_or_buf = r"data/output/kg.csv")
-        
-    def source(self):
+        kg_df.to_csv(path_or_buf = r"/home/nguyen/Github/MyKMS/NLP/SimpleNLP/data/output/kg.csv")
+
+    def numbers(self):
+        entity_pairs = self.get_entitiy_pairs()
+        self.number = len(entity_pairs)
+        return self.number
+
+    def NLPrun(self):
+        self.read_txt()
+        self.get_entitiy_pairs()
+        self.get_relation()
         entity_pairs = self.get_entitiy_pairs()
         self.source = [i[0] for i in entity_pairs]
         # extract object
-        return self.source
-      
-    def target(self):
-        entity_pairs = self.get_entitiy_pairs()
+        #    entity_pairs = self.get_entitiy_pairs()
         self.target = [i[1] for i in entity_pairs]
-        return self.target
-
+        self.kg_df = pd.DataFrame({'source': self.source,'target': self.target,'edge': self.relations})
+        self.G = nx.from_pandas_edgelist(self.kg_df, "source", "target", edge_attr=True, create_using=nx.MultiDiGraph())
