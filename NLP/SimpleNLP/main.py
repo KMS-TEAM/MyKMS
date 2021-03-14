@@ -54,3 +54,11 @@ if __name__ == "__main__":
             #    print(source, '!', relation, '!', target)
             #    session.write_transaction(creat_relation, relation, target, source)
 
+
+    with driver.session() as session:
+        for title in test.source():
+            session.write_transaction(add_friend, title)
+        for titles in test.target():
+            session.write_transaction(add_friend, titles)
+
+    print("tested")
