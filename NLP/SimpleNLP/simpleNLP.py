@@ -180,5 +180,7 @@ class SimpleNLP():
         entity_pairs = self.get_entitiy_pairs()
         self.source = [i[0] for i in entity_pairs]
         # extract object
-        entity_pairs = self.get_entitiy_pairs()
+        #    entity_pairs = self.get_entitiy_pairs()
         self.target = [i[1] for i in entity_pairs]
+        self.kg_df = pd.DataFrame({'source': self.source,'target': self.target,'edge': self.relations})
+        self.G = nx.from_pandas_edgelist(self.kg_df, "source", "target", edge_attr=True, create_using=nx.MultiDiGraph())

@@ -1,6 +1,6 @@
 from neo4j import GraphDatabase
 import simpleNLP as xxx
-
+import networkx as nx
 driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "1"))
 
 def creat_source(tx , title ):
@@ -34,8 +34,11 @@ if __name__ == "__main__":
     relations = test.relations
     sources = test.source
     targets = test.target
-
-    with driver.session() as session:
+    kg = test.kg_df
+    Graph= test.G
+    #pos = nx.spring_layout(Graph)
+    #nx.draw(Graph, with_labels=True, node_color='skyblue', pos=pos)
+    #with driver.session() as session:
             #for source in test.source():
             #     session.write_transaction(creat_source, source)
             #for target in test.target():
@@ -44,9 +47,10 @@ if __name__ == "__main__":
             #    session.write_transaction(creat_relation,relation.get_relation, relation.target, relation.source)
 
             #print(test.number())
-            for i in range(1, test.numbers()):
-                relation = relations[i]
-                source = sources[i]
-                target = targets[i]
-                print(source, '!', relation, '!', target)
-                session.write_transaction(creat_relation, relation, target, source)
+            #for i in range(1, test.numbers()):
+            #    relation = relations[i]
+            #    source = sources[i]
+            #    target = targets[i]
+            #    print(source, '!', relation, '!', target)
+            #    session.write_transaction(creat_relation, relation, target, source)
+
