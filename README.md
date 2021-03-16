@@ -37,8 +37,11 @@ https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/
 ### Create apoc.conf in /etc/neo4j/
 
 apoc.import.file.enabled=true
+
 apoc.import.file.use_neo4j_config=true
+
 apoc.trigger.enabled=true
+
 apoc.ttl.enabled=true
 
 
