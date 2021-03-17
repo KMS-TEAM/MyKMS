@@ -1,22 +1,24 @@
 from neo4j import GraphDatabase
 import simpleNLP as xxx
 import networkx as nx
-driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "1"))
 
+driver = GraphDatabase.driver(uri="neo4j://localhost:7687", auth=('neo4j', '1'))
 def creat_source(tx , title ):
      tx.run("CREATE (source:entitiy_1{title: $title})", title=title )
-     return None
+     return
 def creat_target(tx, title):
      tx.run ("CREATE (target:entitiy_1{title: $title})", title=title)
 def creat_relation (tx, relation, title, source):
      query = (
         "CREATE (p1:Person { name: $title }) "
         "CREATE (p2:Person { name: $source }) "
-        "CREATE p = (p1)-[:relation {infor: $relation}]->(p2) "
-        "RETURN p"
+        "CREATE (p1)-[:relation {infor: $relation}]->(p2) "
+        "RETURN p1, p2"
     )
-     tx.run(query, title=title,source=source, relation=relation )
-     return None
+     result = tx.run(query, title=title,source=source, relation=relation )
+     return [{"p1": record["p1"]["name"], "p2": record["p2"]["name"]}
+             for record in result]
+
 def print_friends(tx, name):
     result = tx.run("MATCH (a:Person {name: $name})", name=name)
     return result.single()
@@ -27,38 +29,23 @@ def update_friends(tx, live, name):
 
 #    session.write_transaction(update_friends, "HongKong", "Arthur")
 #    session.read_transaction(print_friends, "Arthur")
-driver.close()
+
 if __name__ == "__main__":
-    test = xxx.SimpleNLP(u"data/input/test.txt")
+    with driver.session() as session:
+     test = xxx.SimpleNLP(u"data/input/test.txt")
     test.NLPrun()
     relations = test.relations
     sources = test.source
     targets = test.target
-    kg = test.kg_df
-    Graph= test.G
-    #pos = nx.spring_layout(Graph)
-    #nx.draw(Graph, with_labels=True, node_color='skyblue', pos=pos)
-    #with driver.session() as session:
-            #for source in test.source():
-            #     session.write_transaction(creat_source, source)
-            #for target in test.target():
-            #    session.write_transaction(creat_target, target)
-            #for relation in test.get_relation():
-            #    session.write_transaction(creat_relation,relation.get_relation, relation.target, relation.source)
+    G =[]
+    with driver.session() as sesstion:
+        for i in range(1, test.numbers()):
+            relation = relations[i]
+            source = sources[i]
+            target = targets[i]
+            temp = session.write_transaction(creat_relation, relation, target, source)
+            print(temp)
 
-            #print(test.number())
-            #for i in range(1, test.numbers()):
-            #    relation = relations[i]
-            #    source = sources[i]
-            #    target = targets[i]
-            #    print(source, '!', relation, '!', target)
-            #    session.write_transaction(creat_relation, relation, target, source)
+    #nx.write_graphml(G, '/home/nguyen/Documents/database/neo4j/test.graphml')
 
 
-    with driver.session() as session:
-        for title in test.source():
-            session.write_transaction(add_friend, title)
-        for titles in test.target():
-            session.write_transaction(add_friend, titles)
-
-    print("tested")
