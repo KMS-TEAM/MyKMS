@@ -1,8 +1,13 @@
 # Tokenization of paragraphs/sentences
 import nltk
+import re
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+# Creating the Bag of Words model
+from sklearn.feature_extraction.text import CountVectorizer
+# Creating the TF-IDF model
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 paragraph = """I have three visions for India. In 3000 years of our history, people from all over 
                the world have come and invaded us, captured our lands, conquered our minds. 
@@ -28,22 +33,22 @@ paragraph = """I have three visions for India. In 3000 years of our history, peo
                I was lucky to have worked with all three of them closely and consider this the great opportunity of my life. 
                I see four milestones in my career"""
 
-# Tokenizing sentences
+ps = PorterStemmer()
+wordnet = WordNetLemmatizer()
 sentences = nltk.sent_tokenize(paragraph)
-# Tokenizing words
-stemmer = PorterStemmer()
-lemmatizer = WordNetLemmatizer()
-
-# Stemming
-#for i in range(len(sentences)):
-#    words = nltk.word_tokenize(sentences[i])
-#    words = [stemmer.stem(word) for word in words if word not in set(stopwords.words('english'))]
-#    sentences[i] = ' '.join(words)
-
-# Lemmatization
+corpus = []
 for i in range(len(sentences)):
-    words = nltk.word_tokenize(sentences[i])
-    words = [lemmatizer.lemmatize(word) for word in words if word not in set(stopwords.words('english'))]
-    sentences[i] = ' '.join(words)
+    review = re.sub('[^a-zA-Z]', ' ', sentences[i])
+    review = review.lower()
+    review = review.split()
+    review = [ps.stem(word) for word in review if not word in set(stopwords.words('english'))]
+    review = ' '.join(review)
+    corpus.append(review)
+# Bag of Word model
+#cv = CountVectorizer(max_features=1500)
 
-print(sentences)
+# TF-IDF model
+cv = TfidfVectorizer()
+X = cv.fit_transform(corpus).toarray()
+print(X)
+
