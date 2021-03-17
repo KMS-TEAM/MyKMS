@@ -1,7 +1,6 @@
 # importing the Dataset
 
 import pandas as pd
-
 messages = pd.read_csv('smsspamcollection/SMSSpamCollection', sep='\t',
                            names=["label", "message"])
 
