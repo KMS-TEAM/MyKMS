@@ -4,13 +4,13 @@ from neo4j.exceptions import ServiceUnavailable
 
 class Neo:
     def __init__(self, uri, user, password):
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.driver = GraphDatabase.driver(uri="neo4j://localhost:7687", auth=("neo4j", "1"))
 
     def close(self):
         # Don't forget to close the driver connection when you are finished with it
         self.driver.close()
 
-    def create_friendship(self, person1_name, person2_name):
+    def create_friendship(self, list people, list friedship):
         with self.driver.session() as session:
             # Write transactions allow the driver to handle retries and transient errors
             result = session.write_transaction(
