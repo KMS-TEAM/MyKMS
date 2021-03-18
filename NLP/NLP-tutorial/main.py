@@ -1,13 +1,9 @@
-# Tokenization of paragraphs/sentences
 import nltk
-import re
-from nltk.stem import PorterStemmer
-from nltk.stem import WordNetLemmatizer
+
+from gensim.models import Word2Vec
 from nltk.corpus import stopwords
-# Creating the Bag of Words model
-from sklearn.feature_extraction.text import CountVectorizer
-# Creating the TF-IDF model
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+import re
 
 paragraph = """I have three visions for India. In 3000 years of our history, people from all over 
                the world have come and invaded us, captured our lands, conquered our minds. 
@@ -33,22 +29,28 @@ paragraph = """I have three visions for India. In 3000 years of our history, peo
                I was lucky to have worked with all three of them closely and consider this the great opportunity of my life. 
                I see four milestones in my career"""
 
-ps = PorterStemmer()
-wordnet = WordNetLemmatizer()
-sentences = nltk.sent_tokenize(paragraph)
-corpus = []
+# Preprocessing the data
+text = re.sub(r'\[[0-9]*\]', ' ', paragraph)
+text = re.sub(r'\s+', ' ', text)
+text = text.lower()
+text = re.sub(r'\d', ' ', text)
+text = re.sub(r'\s+', ' ', text)
+
+# Preparing the dataset
+sentences = nltk.sent_tokenize(text)
+
+sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
+
 for i in range(len(sentences)):
-    review = re.sub('[^a-zA-Z]', ' ', sentences[i])
-    review = review.lower()
-    review = review.split()
-    review = [ps.stem(word) for word in review if not word in set(stopwords.words('english'))]
-    review = ' '.join(review)
-    corpus.append(review)
-# Bag of Word model
-#cv = CountVectorizer(max_features=1500)
+    sentences[i] = [word for word in sentences[i] if word not in stopwords.words('english')]
 
-# TF-IDF model
-cv = TfidfVectorizer()
-X = cv.fit_transform(corpus).toarray()
-print(X)
+# Training the Word2Vec model
+model = Word2Vec(sentences, min_count=1)
 
+words = model.wv.vocab
+
+# Finding Word Vectors
+vector = model.wv['war']
+
+# Most similar words
+similar = model.wv.most_similar('vikram')
