@@ -1,7 +1,7 @@
 import logging
 from neo4j import GraphDatabase
 from neo4j.exceptions import ServiceUnavailable
-
+import networkx as nx
 class Neo:
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
